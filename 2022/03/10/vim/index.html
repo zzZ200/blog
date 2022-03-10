@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Vim 学习：  https:&#x2F;&#x2F;missing-semester-cn.github.io&#x2F;2020&#x2F;editors&#x2F; https:&#x2F;&#x2F;danielmiessler.com&#x2F;study&#x2F;vim&#x2F;    打开文件方式 1234vim 文件路径              # 打开指定文件vim +数字 文件路径	     # 打开指定的文件，并且将光标移动到指定行vim +&#x2F;关键词 文件的路径">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim">
+<meta property="og:url" content="https://zzz200.github.io/blog/2022/03/10/vim/index.html">
+<meta property="og:site_name" content="zzZ&#39; Blog">
+<meta property="og:description" content="Vim 学习：  https:&#x2F;&#x2F;missing-semester-cn.github.io&#x2F;2020&#x2F;editors&#x2F; https:&#x2F;&#x2F;danielmiessler.com&#x2F;study&#x2F;vim&#x2F;    打开文件方式 1234vim 文件路径              # 打开指定文件vim +数字 文件路径	     # 打开指定的文件，并且将光标移动到指定行vim +&#x2F;关键词 文件的路径">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/zzZ200/imgrepos/main/Picture202203102110457.gif">
+<meta property="article:published_time" content="2022-03-10T12:00:00.000Z">
+<meta property="article:modified_time" content="2022-03-10T13:16:01.808Z">
+<meta property="article:author" content="zzZ">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zzZ200/imgrepos/main/Picture202203102110457.gif">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/blog/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/blog/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Vim</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/blog/true" title="zzZ&#39; Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/03/10/vim/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/03/10/vim/&text=Vim"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/03/10/vim/&is_video=false&description=Vim"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vim&body=Check out this article: https://zzz200.github.io/blog/2022/03/10/vim/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/03/10/vim/&name=Vim&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/03/10/vim/&t=Vim"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vim"><span class="toc-number">1.</span> <span class="toc-text">Vim</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Vim-%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">Vim 三种模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E8%88%AC%E6%A8%A1%E5%BC%8F-Normal-mode"><span class="toc-number">1.1.1.</span> <span class="toc-text">一般模式 (Normal mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E6%A8%A1%E5%BC%8F-Insert-mode"><span class="toc-number">1.1.2.</span> <span class="toc-text">插入模式 (Insert mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F-Last-line-mode"><span class="toc-number">1.1.3.</span> <span class="toc-text">命令模式 (Last line mode)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">常用操作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">推荐使用</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Vim
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">zzZ</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-03-10T12:00:00.000Z" itemprop="datePublished">2022-03-10</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/blog/categories/Tools/">Tools</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/blog/tags/Linux/" rel="tag">Linux</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h1><blockquote>
+<p>学习：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://missing-semester-cn.github.io/2020/editors/">https://missing-semester-cn.github.io/2020/editors/</a></li>
+<li><a target="_blank" rel="noopener" href="https://danielmiessler.com/study/vim/">https://danielmiessler.com/study/vim/</a></li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/zzZ200/imgrepos/main/Picture202203102110457.gif"></p>
+<p><strong>打开文件方式</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim 文件路径              # 打开指定文件</span><br><span class="line">vim +数字 文件路径	     # 打开指定的文件，并且将光标移动到指定行</span><br><span class="line">vim +/关键词 文件的路径	   # 打开指定文件，并高亮显示关键词</span><br><span class="line">vim 文件路径1 文件路径2 文件路径3 # 同时打开多个文件</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Vim-三种模式"><a href="#Vim-三种模式" class="headerlink" title="Vim 三种模式"></a>Vim 三种模式</h2><h3 id="一般模式-Normal-mode"><a href="#一般模式-Normal-mode" class="headerlink" title="一般模式 (Normal mode)"></a>一般模式 (Normal mode)</h3><ul>
+<li><p>打开文件后默认模式</p>
+</li>
+<li><p>在该模式下不能对文件直接编辑，可以输入快捷键进行一些操作（删除行、复制行、移动光标、粘贴等等）</p>
+</li>
+</ul>
+<h3 id="插入模式-Insert-mode"><a href="#插入模式-Insert-mode" class="headerlink" title="插入模式 (Insert mode)"></a>插入模式 (Insert mode)</h3><ul>
+<li>在该模式下可以对文件的内容进行编辑</li>
+</ul>
+<h3 id="命令模式-Last-line-mode"><a href="#命令模式-Last-line-mode" class="headerlink" title="命令模式 (Last line mode)"></a>命令模式 (Last line mode)</h3><ul>
+<li>可以在末行输入命令来对文件进行操作（搜索、替换、保存、退出、撤销、高亮等）</li>
+</ul>
+<h1 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h1><table>
+<thead>
+<tr>
+<th>基本操作</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>:w</code></td>
+<td>保存</td>
+</tr>
+<tr>
+<td><code>:wq</code> 或 <code>ZZ</code></td>
+<td>保存并退出</td>
+</tr>
+<tr>
+<td><code>:e</code></td>
+<td>打开文件</td>
+</tr>
+<tr>
+<td><code>u</code></td>
+<td>undo</td>
+</tr>
+<tr>
+<td><code>Ctrl+r</code></td>
+<td>redo</td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td>重复上一个操作</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>光标移动</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>h</code></td>
+<td>往左移动</td>
+</tr>
+<tr>
+<td><code>j</code></td>
+<td>往下移动</td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td>往上移动</td>
+</tr>
+<tr>
+<td><code>l</code></td>
+<td>往右移动</td>
+</tr>
+<tr>
+<td><code>gg</code></td>
+<td>移动到首行</td>
+</tr>
+<tr>
+<td><code>G</code></td>
+<td>移动到尾行</td>
+</tr>
+<tr>
+<td>m<code>G</code></td>
+<td>移动到第m行</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>到行首</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>到行首第一个非空白字符</td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td>到行末尾</td>
+</tr>
+<tr>
+<td><code>f</code>&lt;</td>
+<td>跳转到目标字符处(这里是&lt;)</td>
+</tr>
+<tr>
+<td><code>t</code>&lt;</td>
+<td>跳转到目标字符前(这里是&lt;)</td>
+</tr>
+<tr>
+<td><code>Ctrl+f</code></td>
+<td>向下翻屏</td>
+</tr>
+<tr>
+<td><code>Ctrl+b</code></td>
+<td>向上翻屏</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>删除操作</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dd</code></td>
+<td>删除当前行</td>
+</tr>
+<tr>
+<td><code>dt&lt;</code></td>
+<td>删除从光标所在位置到指定字符前的内容(这里是&lt;)</td>
+</tr>
+<tr>
+<td><code>D</code></td>
+<td>清空光标所在位置到行末尾的内容</td>
+</tr>
+<tr>
+<td><code>d</code>m</td>
+<td>删除到指定位置处，例如d0删除从光标位置到行首，dw删除一个单词</td>
+</tr>
+<tr>
+<td><code>C</code></td>
+<td>删除光标所在位置后的内容并进入insert模式</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>删除光标所在行的内容并进入insert模式</td>
+</tr>
+<tr>
+<td><code>cis</code></td>
+<td>删除当前句子内容并进入insert模式</td>
+</tr>
+<tr>
+<td><code>ct</code>&lt;</td>
+<td>删除到目标字符(这里是&lt;)前的内容并进入insert模式</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>复制粘贴</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>y</code></td>
+<td>复制选中的内容</td>
+</tr>
+<tr>
+<td><code>yip</code></td>
+<td>复制当前段落内容</td>
+</tr>
+<tr>
+<td><code>yy</code></td>
+<td>复制当前行</td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td>粘贴到光标后</td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td>粘贴到光标前</td>
+</tr>
+</tbody></table>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:1, $ normal i#         # 批量添加注释符</span><br><span class="line">:% s/old/new/g          # 替换</span><br><span class="line">:/[search]&lt;CR&gt;          # 搜索目标字符串, n查找下一个, N查找上一个</span><br><span class="line">gg=G                    # 自动格式化对齐代码</span><br><span class="line">:20,30d                 # 删除第20行到第30行内容</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="推荐使用"><a href="#推荐使用" class="headerlink" title="推荐使用"></a>推荐使用</h1><blockquote>
+<p>vimplus: <a target="_blank" rel="noopener" href="https://github.com/chxuan/vimplus">https://github.com/chxuan/vimplus</a></p>
+</blockquote>
+<p>配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">inoremap jk &lt;ESC&gt;   &quot; 修改ESC按键映射</span><br><span class="line">syntax on           &quot; 语法高亮</span><br><span class="line">set number          &quot; 显示行号</span><br><span class="line">set hlserach        &quot; 高亮搜索内容</span><br><span class="line">set incsearch       &quot; 实时显示搜索内容</span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/about/">About</a></li>
+         
+          <li><a href="/blog/archives/">Writing</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vim"><span class="toc-number">1.</span> <span class="toc-text">Vim</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Vim-%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">Vim 三种模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E8%88%AC%E6%A8%A1%E5%BC%8F-Normal-mode"><span class="toc-number">1.1.1.</span> <span class="toc-text">一般模式 (Normal mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E6%A8%A1%E5%BC%8F-Insert-mode"><span class="toc-number">1.1.2.</span> <span class="toc-text">插入模式 (Insert mode)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F-Last-line-mode"><span class="toc-number">1.1.3.</span> <span class="toc-text">命令模式 (Last line mode)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">常用操作</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">推荐使用</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/03/10/vim/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/03/10/vim/&text=Vim"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/03/10/vim/&is_video=false&description=Vim"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Vim&body=Check out this article: https://zzz200.github.io/blog/2022/03/10/vim/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/03/10/vim/&title=Vim"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/03/10/vim/&name=Vim&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/03/10/vim/&t=Vim"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022
+    zzZ
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/blog/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
