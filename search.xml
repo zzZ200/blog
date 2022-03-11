@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>Vim</title>
+      <link href="/blog/2022/03/10/vim/"/>
+      <url>/blog/2022/03/10/vim/</url>
+      
+        <content type="html"><![CDATA[<h1 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h1><blockquote><p>学习：</p><ul><li><a href="https://missing-semester-cn.github.io/2020/editors/">https://missing-semester-cn.github.io/2020/editors/</a></li><li><a href="https://danielmiessler.com/study/vim/">https://danielmiessler.com/study/vim/</a></li></ul></blockquote><p><img src="https://raw.githubusercontent.com/zzZ200/imgrepos/main/Picture202203102110457.gif"></p><p><strong>打开文件方式</strong></p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim 文件路径              # 打开指定文件</span><br><span class="line">vim +数字 文件路径     # 打开指定的文件，并且将光标移动到指定行</span><br><span class="line">vim +/关键词 文件的路径   # 打开指定文件，并高亮显示关键词</span><br><span class="line">vim 文件路径1 文件路径2 文件路径3 # 同时打开多个文件</span><br></pre></td></tr></table></figure><h2 id="Vim-三种模式"><a href="#Vim-三种模式" class="headerlink" title="Vim 三种模式"></a>Vim 三种模式</h2><h3 id="一般模式-Normal-mode"><a href="#一般模式-Normal-mode" class="headerlink" title="一般模式 (Normal mode)"></a>一般模式 (Normal mode)</h3><ul><li><p>打开文件后默认模式</p></li><li><p>在该模式下不能对文件直接编辑，可以输入快捷键进行一些操作（删除行、复制行、移动光标、粘贴等等）</p></li></ul><h3 id="插入模式-Insert-mode"><a href="#插入模式-Insert-mode" class="headerlink" title="插入模式 (Insert mode)"></a>插入模式 (Insert mode)</h3><ul><li>在该模式下可以对文件的内容进行编辑</li></ul><h3 id="命令模式-Last-line-mode"><a href="#命令模式-Last-line-mode" class="headerlink" title="命令模式 (Last line mode)"></a>命令模式 (Last line mode)</h3><ul><li>可以在末行输入命令来对文件进行操作（搜索、替换、保存、退出、撤销、高亮等）</li></ul><h2 id="常用操作"><a href="#常用操作" class="headerlink" title="常用操作"></a>常用操作</h2><table><thead><tr><th>基本操作</th><th>作用</th></tr></thead><tbody><tr><td><code>:w</code></td><td>保存</td></tr><tr><td><code>:wq</code> 或 <code>ZZ</code></td><td>保存并退出</td></tr><tr><td><code>:e</code></td><td>打开文件</td></tr><tr><td><code>u</code></td><td>undo</td></tr><tr><td><code>Ctrl+r</code></td><td>redo</td></tr><tr><td><code>.</code></td><td>重复上一个操作</td></tr></tbody></table><table><thead><tr><th>光标移动</th><th>作用</th></tr></thead><tbody><tr><td><code>h</code></td><td>往左移动</td></tr><tr><td><code>j</code></td><td>往下移动</td></tr><tr><td><code>k</code></td><td>往上移动</td></tr><tr><td><code>l</code></td><td>往右移动</td></tr><tr><td><code>gg</code></td><td>移动到首行</td></tr><tr><td><code>G</code></td><td>移动到尾行</td></tr><tr><td>m<code>G</code></td><td>移动到第m行</td></tr><tr><td><code>0</code></td><td>到行首</td></tr><tr><td><code>^</code></td><td>到行首第一个非空白字符</td></tr><tr><td><code>$</code></td><td>到行末尾</td></tr><tr><td><code>f</code>&lt;</td><td>跳转到目标字符处(这里是&lt;)</td></tr><tr><td><code>t</code>&lt;</td><td>跳转到目标字符前(这里是&lt;)</td></tr><tr><td><code>Ctrl+f</code></td><td>向下翻屏</td></tr><tr><td><code>Ctrl+b</code></td><td>向上翻屏</td></tr></tbody></table><table><thead><tr><th>删除操作</th><th>作用</th></tr></thead><tbody><tr><td><code>dd</code></td><td>删除当前行</td></tr><tr><td><code>dt&lt;</code></td><td>删除从光标所在位置到指定字符前的内容(这里是&lt;)</td></tr><tr><td><code>D</code></td><td>清空光标所在位置到行末尾的内容</td></tr><tr><td><code>d</code>m</td><td>删除到指定位置处，例如d0删除从光标位置到行首，dw删除一个单词</td></tr><tr><td><code>C</code></td><td>删除光标所在位置后的内容并进入insert模式</td></tr><tr><td><code>S</code></td><td>删除光标所在行的内容并进入insert模式</td></tr><tr><td><code>cis</code></td><td>删除当前句子内容并进入insert模式</td></tr><tr><td><code>ct</code>&lt;</td><td>删除到目标字符(这里是&lt;)前的内容并进入insert模式</td></tr><tr><td></td><td></td></tr></tbody></table><table><thead><tr><th>复制粘贴</th><th>作用</th></tr></thead><tbody><tr><td><code>y</code></td><td>复制选中的内容</td></tr><tr><td><code>yip</code></td><td>复制当前段落内容</td></tr><tr><td><code>yy</code></td><td>复制当前行</td></tr><tr><td><code>p</code></td><td>粘贴到光标后</td></tr><tr><td><code>P</code></td><td>粘贴到光标前</td></tr></tbody></table><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">:1, $ normal i#         # 批量添加注释符</span><br><span class="line">:% s/old/new/g          # 替换</span><br><span class="line">:/[search]&lt;CR&gt;          # 搜索目标字符串, n查找下一个, N查找上一个</span><br><span class="line">gg=G                    # 自动格式化对齐代码</span><br><span class="line">:20,30d                 # 删除第20行到第30行内容</span><br></pre></td></tr></table></figure><h2 id="推荐使用"><a href="#推荐使用" class="headerlink" title="推荐使用"></a>推荐使用</h2><blockquote><p>vimplus: <a href="https://github.com/chxuan/vimplus">https://github.com/chxuan/vimplus</a></p></blockquote><p>配置文件：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">inoremap jk &lt;ESC&gt;   &quot; 修改ESC按键映射</span><br><span class="line">syntax on           &quot; 语法高亮</span><br><span class="line">set number          &quot; 显示行号</span><br><span class="line">set hlserach        &quot; 高亮搜索内容</span><br><span class="line">set incsearch       &quot; 实时显示搜索内容</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> Tools </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
