@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="GDB + Pwndbg 参考：   Debugging with GDB GDB的那些奇淫技巧-evilpan   整理一下 gdb + pwndbg 的一些常用命令 运行1234567891011121314151617$ gdb program# 运行程序，简写r(gdb) run(gdb) r# 带参数运行程序(method 1)(gdb) run arg1 arg2 # 带参数运行程序(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GDB">
+<meta property="og:url" content="https://zzz200.github.io/blog/2022/04/04/GDB/index.html">
+<meta property="og:site_name" content="zzZ&#39; Blog">
+<meta property="og:description" content="GDB + Pwndbg 参考：   Debugging with GDB GDB的那些奇淫技巧-evilpan   整理一下 gdb + pwndbg 的一些常用命令 运行1234567891011121314151617$ gdb program# 运行程序，简写r(gdb) run(gdb) r# 带参数运行程序(method 1)(gdb) run arg1 arg2 # 带参数运行程序(">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-04T10:37:24.000Z">
+<meta property="article:modified_time" content="2022-04-04T10:40:54.760Z">
+<meta property="article:author" content="zzZ">
+<meta property="article:tag" content="blog">
+<meta property="article:tag" content="Tools">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/blog/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/blog/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>GDB</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/blog/atom.xml" title="zzZ&#39; Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/About/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/blog/Search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/blog/2022/03/13/docker/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/04/04/GDB/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/04/04/GDB/&text=GDB"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/04/04/GDB/&is_video=false&description=GDB"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GDB&body=Check out this article: https://zzz200.github.io/blog/2022/04/04/GDB/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/04/04/GDB/&name=GDB&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/04/04/GDB/&t=GDB"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GDB-Pwndbg"><span class="toc-number">1.</span> <span class="toc-text">GDB + Pwndbg</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%AD%E7%82%B9"><span class="toc-number">1.2.</span> <span class="toc-text">断点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%88"><span class="toc-number">1.4.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E7%9C%8B"><span class="toc-number">1.5.</span> <span class="toc-text">数据查看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86"><span class="toc-number">1.6.</span> <span class="toc-text">堆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.7.</span> <span class="toc-text">进程调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.8.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        GDB
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">zzZ</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-04-04T10:37:24.000Z" itemprop="datePublished">2022-04-04</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/blog/categories/Tools/">Tools</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/blog/tags/Tools/" rel="tag">Tools</a>, <a class="tag-link-link" href="/blog/tags/blog/" rel="tag">blog</a>, <a class="tag-link-link" href="/blog/tags/pwn/" rel="tag">pwn</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="GDB-Pwndbg"><a href="#GDB-Pwndbg" class="headerlink" title="GDB + Pwndbg"></a>GDB + Pwndbg</h1><blockquote>
+<p>参考： </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://sourceware.org/gdb/onlinedocs/gdb/">Debugging with GDB</a></li>
+<li><a target="_blank" rel="noopener" href="https://evilpan.com/2020/09/13/gdb-tips/">GDB的那些奇淫技巧-evilpan</a></li>
+</ul>
+</blockquote>
+<p>整理一下 gdb + pwndbg 的一些常用命令</p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$ </span><span class="language-bash">gdb program</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">运行程序，简写r</span></span><br><span class="line">(gdb) run</span><br><span class="line">(gdb) r</span><br><span class="line"><span class="meta"># </span><span class="language-bash">带参数运行程序(method 1)</span></span><br><span class="line">(gdb) run arg1 arg2 </span><br><span class="line"><span class="meta"># </span><span class="language-bash">带参数运行程序(method 2)</span></span><br><span class="line">(gdb) set args arg1 arg2</span><br><span class="line">(gdb) run</span><br><span class="line"><span class="meta"># </span><span class="language-bash">指定标准输入</span></span><br><span class="line">(gdb) run &lt;file</span><br><span class="line">(gdb) run &lt; &lt;(python3 -c &#x27;print(b&quot;A&quot;*10)&#x27;)</span><br><span class="line">(gdb) run &lt;&lt;&lt;$(python3 -c &#x27;print(b&quot;A&quot;*10)&#x27;)</span><br><span class="line"><span class="meta"># </span><span class="language-bash">链接到正在运行的进程，并进行调试</span></span><br><span class="line">(gdb) attach &#123;process-id&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">断开链接</span></span><br><span class="line">(gdb) detach</span><br></pre></td></tr></table></figure>
+
+<h2 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">添加断点(指定函数名)</span></span><br><span class="line">(gdb) break main</span><br><span class="line"><span class="meta"># </span><span class="language-bash">添加断点(指定内存地址)</span></span><br><span class="line">(gdb) break *0x00400123</span><br><span class="line"><span class="meta"># </span><span class="language-bash">列出所有断点信息(简写info <span class="built_in">break</span>)</span></span><br><span class="line">(gdb) info breakpoints </span><br><span class="line"><span class="meta"># </span><span class="language-bash">删除编号为1的断点</span></span><br><span class="line">(gdb) delete 1</span><br><span class="line"><span class="meta"># </span><span class="language-bash">删除所有断点(简写del)</span></span><br><span class="line">(gdb) delete</span><br><span class="line"><span class="meta"># </span><span class="language-bash">删除内存地址的断点</span></span><br><span class="line">(gdb) clear *0x00400123</span><br><span class="line"><span class="meta"># </span><span class="language-bash">禁用指定编号断点</span></span><br><span class="line">(gdb) disable 2</span><br><span class="line"><span class="meta"># </span><span class="language-bash">启用指定编号断点</span></span><br><span class="line">(gdb) enable 2</span><br><span class="line"><span class="meta"># </span><span class="language-bash">条件断点</span></span><br><span class="line">(gdb) condition &#123;id&#125; &#123;expr&#125;</span><br><span class="line">                  2   i == 10  # 只有在 i==10 成立时2号断点生效</span><br><span class="line"><span class="meta"># </span><span class="language-bash">继续执行(简写c)</span></span><br><span class="line">(gdb) continue</span><br><span class="line"><span class="meta"># </span><span class="language-bash">单步进入(遇到函数会进入)</span></span><br><span class="line">(gdb) stepi</span><br><span class="line"><span class="meta"># </span><span class="language-bash">单步跳过(遇到函数不会进入)</span></span><br><span class="line">(gdb) nexti</span><br><span class="line"><span class="meta"># </span><span class="language-bash">结束当前函数</span></span><br><span class="line">(gdb) finish</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">查看指定函数附近的代码</span></span><br><span class="line">(gdb) list main  </span><br><span class="line"><span class="meta"># </span><span class="language-bash">查看指定地址的代码</span></span><br><span class="line">(gdb) list *0x00400800</span><br><span class="line"><span class="meta"># </span><span class="language-bash">添加源代码搜索路径</span></span><br><span class="line">(gdb) dir &#123;dirpath&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">复原源代码搜索路径</span></span><br><span class="line">(gdb) dir </span><br><span class="line"><span class="meta"># </span><span class="language-bash">查看源代码搜索路径</span></span><br><span class="line">(gdb) show directories</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印当前执行函数的汇编代码</span></span><br><span class="line">(gdb) disas</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印指定函数的反汇编代码</span></span><br><span class="line">(gdb) disas main</span><br><span class="line"><span class="meta"># </span><span class="language-bash">对指定地址进行反汇编</span></span><br><span class="line">(gdb) disas &#123;address&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印程序中的函数</span></span><br><span class="line">(gdb) info functions</span><br></pre></td></tr></table></figure>
+
+<h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">打印backtrace(简写bt)</span></span><br><span class="line">(gdb) backtrace</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印当前运行的栈帧</span></span><br><span class="line">(gdb) frame</span><br><span class="line"><span class="meta"># </span><span class="language-bash">切换到指定编号的栈帧</span></span><br><span class="line">(gdb) frame &#123;id&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">显示当前函数参数</span></span><br><span class="line">(gdb) info args</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据查看"><a href="#数据查看" class="headerlink" title="数据查看"></a>数据查看</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">打印出表达式结果</span></span><br><span class="line">(gdb) print &#123;expression&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">十六进制输出结果</span></span><br><span class="line">(gdb) print /x &#123;expr&#125;</span><br><span class="line">/x 十六进制</span><br><span class="line">/o 八进制</span><br><span class="line">/d 十进制</span><br><span class="line">/t 二进制 </span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印历史记录条目</span></span><br><span class="line">(gdb) print $1</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印指定寄存器数据</span></span><br><span class="line">(gdb) print /x $rax</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">从指定地址处读取数据</span></span><br><span class="line">(gdb) x/[数量][长度单位][显示格式] where</span><br><span class="line">长度单位:</span><br><span class="line">/b 以1字节为单位读取数据</span><br><span class="line">/w 以4字节为单位读取数据</span><br><span class="line">/g 以8字节为单位读取数据</span><br><span class="line"></span><br><span class="line">/i 尝试解析成汇编</span><br><span class="line"></span><br><span class="line">例如:</span><br><span class="line">(gdb) x/8gx $rsp+8</span><br><span class="line">0x7fffffffe478:	0x00007fffffffe6ef	0x0000000000000000</span><br><span class="line">0x7fffffffe488:	0x00007fffffffe70e	0x00007fffffffe729</span><br><span class="line">0x7fffffffe498:	0x00007fffffffe739	0x00007fffffffe74c</span><br><span class="line">0x7fffffffe4a8:	0x00007fffffffe758	0x00007fffffffe767</span><br><span class="line">(gdb) x/4wd $rsp+8</span><br><span class="line">0x7fffffffe478:	-6417	32767	0	0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">pwndbg 中加入的 db(dump byte) dw(dump word) dq(dump qword)</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">db address [count] , 命令后可以指定打印的数量, 不指定则使用默认值</span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">db <span class="variable">$rsp</span></span></span><br><span class="line">00007fffffffe470     01 00 00 00 00 00 00 00 ef e6 ff ff ff 7f 00 00</span><br><span class="line">00007fffffffe480     00 00 00 00 00 00 00 00 0e e7 ff ff ff 7f 00 00</span><br><span class="line">00007fffffffe490     29 e7 ff ff ff 7f 00 00 39 e7 ff ff ff 7f 00 00</span><br><span class="line">00007fffffffe4a0     4c e7 ff ff ff 7f 00 00 58 e7 ff ff ff 7f 00 00</span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">dw <span class="variable">$rsp</span></span></span><br><span class="line">00007fffffffe470     0001 0000 0000 0000 e6ef ffff 7fff 0000</span><br><span class="line">00007fffffffe480     0000 0000 0000 0000 e70e ffff 7fff 0000</span><br><span class="line">00007fffffffe490     e729 ffff 7fff 0000 e739 ffff 7fff 0000</span><br><span class="line">00007fffffffe4a0     e74c ffff 7fff 0000 e758 ffff 7fff 0000</span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">dq <span class="variable">$rsp</span></span></span><br><span class="line">00007fffffffe470     0000000000000001 00007fffffffe6ef</span><br><span class="line">00007fffffffe480     0000000000000000 00007fffffffe70e</span><br><span class="line">00007fffffffe490     00007fffffffe729 00007fffffffe739</span><br><span class="line">00007fffffffe4a0     00007fffffffe74c 00007fffffffe758</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">查看寄存器数据</span></span><br><span class="line">(gdb) info registers</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印本地局部变量</span></span><br><span class="line">(gdb) info locals</span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印全局变量名称</span></span><br><span class="line">(gdb) info variables</span><br><span class="line"><span class="meta"># </span><span class="language-bash">查看类型定义</span></span><br><span class="line">(gdb) ptype &#123;typename&#125;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">ptype main_arena</span></span><br><span class="line">type = struct malloc_state &#123;</span><br><span class="line">    __libc_lock_t mutex;</span><br><span class="line">    int flags;</span><br><span class="line">    int have_fastchunks;</span><br><span class="line">    mfastbinptr fastbinsY[10];</span><br><span class="line">    mchunkptr top;</span><br><span class="line">    mchunkptr last_remainder;</span><br><span class="line">    mchunkptr bins[254];</span><br><span class="line">    unsigned int binmap[4];</span><br><span class="line">    struct malloc_state *next;</span><br><span class="line">    struct malloc_state *next_free;</span><br><span class="line">    size_t attached_threads;</span><br><span class="line">    size_t system_mem;</span><br><span class="line">    size_t max_system_mem;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">pwndbg 中加入 dt (Dump out information on a <span class="built_in">type</span> (e.g. ucontext_t).)</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">打印指定类型的信息（可选指定address）</span></span><br><span class="line">dt typename [address] </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">dt FILE</span></span><br><span class="line">FILE</span><br><span class="line">    +0x0000 _flags               : int</span><br><span class="line">    +0x0008 _IO_read_ptr         : char *</span><br><span class="line">    +0x0010 _IO_read_end         : char *</span><br><span class="line">    +0x0018 _IO_read_base        : char *</span><br><span class="line">    +0x0020 _IO_write_base       : char *</span><br><span class="line">    +0x0028 _IO_write_ptr        : char *</span><br><span class="line">    +0x0030 _IO_write_end        : char *</span><br><span class="line">    +0x0038 _IO_buf_base         : char *</span><br><span class="line">    +0x0040 _IO_buf_end          : char *</span><br><span class="line">    +0x0048 _IO_save_base        : char *</span><br><span class="line">    +0x0050 _IO_backup_base      : char *</span><br><span class="line">    +0x0058 _IO_save_end         : char *</span><br><span class="line">    +0x0060 _markers             : struct _IO_marker *</span><br><span class="line">    +0x0068 _chain               : struct _IO_FILE *</span><br><span class="line">    +0x0070 _fileno              : int</span><br><span class="line">    +0x0074 _flags2              : int</span><br><span class="line">    +0x0078 _old_offset          : __off_t</span><br><span class="line">    +0x0080 _cur_column          : short unsigned int</span><br><span class="line">    +0x0082 _vtable_offset       : signed char</span><br><span class="line">    +0x0083 _shortbuf            : char [1]</span><br><span class="line">    +0x0088 _lock                : _IO_lock_t *</span><br><span class="line">    +0x0090 _offset              : __off64_t</span><br><span class="line">    +0x0098 _codecvt             : struct _IO_codecvt *</span><br><span class="line">    +0x00a0 _wide_data           : struct _IO_wide_data *</span><br><span class="line">    +0x00a8 _freeres_list        : struct _IO_FILE *</span><br><span class="line">    +0x00b0 _freeres_buf         : void *</span><br><span class="line">    +0x00b8 __pad5               : size_t</span><br><span class="line">    +0x00c0 _mode                : int</span><br><span class="line">    +0x00c4 _unused2             : char [20]</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">显示malloc_state结构体信息（有各个字段的偏移</span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">dt <span class="string">&quot;struct malloc_state&quot;</span></span></span><br><span class="line">struct malloc_state</span><br><span class="line">    +0x0000 mutex                : __libc_lock_t</span><br><span class="line">    +0x0004 flags                : int</span><br><span class="line">    +0x0008 have_fastchunks      : int</span><br><span class="line">    +0x0010 fastbinsY            : mfastbinptr [10]</span><br><span class="line">    +0x0060 top                  : mchunkptr</span><br><span class="line">    +0x0068 last_remainder       : mchunkptr</span><br><span class="line">    +0x0070 bins                 : mchunkptr [254]</span><br><span class="line">    +0x0860 binmap               : unsigned int [4]</span><br><span class="line">    +0x0870 next                 : struct malloc_state *</span><br><span class="line">    +0x0878 next_free            : struct malloc_state *</span><br><span class="line">    +0x0880 attached_threads     : size_t</span><br><span class="line">    +0x0888 system_mem           : size_t</span><br><span class="line">    +0x0890 max_system_mem       : size_t</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">pwndbg 中加入 xinfo(Shows offsets of the specified address to useful other locations)</span></span><br><span class="line"><span class="meta"># </span><span class="language-bash">显示指定地址到有用位置的偏移</span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">xinfo [address]</span>  </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">xinfo</span></span><br><span class="line">Extended information for virtual address 0x5555555548d0:</span><br><span class="line"></span><br><span class="line">  Containing mapping:</span><br><span class="line">    0x555555554000     0x55555555a000 r-xp     6000 0      /home/ubuntu/Documents/pwn/pwn</span><br><span class="line"></span><br><span class="line">  Offset information:</span><br><span class="line">         Mapped Area 0x5555555548d0 = 0x555555554000 + 0x8d0</span><br><span class="line">         File (Base) 0x5555555548d0 = 0x555555554000 + 0x8d0</span><br><span class="line">      File (Segment) 0x5555555548d0 = 0x555555554000 + 0x8d0</span><br><span class="line">         File (Disk) 0x5555555548d0 = /home/ubuntu/Documents/pwn/pwn + 0x8d0</span><br><span class="line"></span><br><span class="line"> Containing ELF sections:</span><br><span class="line">               .text 0x5555555548d0 = 0x5555555548d0 + 0x0</span><br></pre></td></tr></table></figure>
+
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">vis_heap_chunks(Visualize chunks on a heap, default to the current arena<span class="string">&#x27;s active heap.)</span></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash"><span class="string">可视化显示当前堆分配情况</span></span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash"><span class="string">vis_heap_chunks</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash"><span class="string">heap、bins、fastbins、smallbins、largebins、tcache、tcachebins</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash"><span class="string">malloc_chunk(Print a chunk.)</span></span></span><br><span class="line"><span class="meta"># </span><span class="language-bash"><span class="string">打印出指定地址的 malloc_chunk</span></span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash"><span class="string">malloc_chunk [addr]</span></span> </span><br></pre></td></tr></table></figure>
+
+<h2 id="进程调试"><a href="#进程调试" class="headerlink" title="进程调试"></a>进程调试</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">设置当进程调用fork时是否进入子进程</span></span><br><span class="line">(gdb) set follow-fork-mode parent/child </span><br></pre></td></tr></table></figure>
+
+
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">查看历史命令</span></span><br><span class="line">(gdb) show commands</span><br><span class="line"><span class="meta"># </span><span class="language-bash">执行上一条命令</span></span><br><span class="line">(gdb) &lt;enter&gt;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">从文件中加载gdb命令</span></span><br><span class="line">(gdb) source &#123;filepath&#125;</span><br><span class="line"><span class="meta"># </span><span class="language-bash">退出gdb (简写q)</span></span><br><span class="line">(gdb) quit</span><br><span class="line"><span class="meta"># </span><span class="language-bash">帮助</span></span><br><span class="line">(gdb) help</span><br></pre></td></tr></table></figure>
+
+<p><strong>pwndbg:</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">设置默认只显示源代码段</span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash"><span class="built_in">set</span> context-sections code</span> </span><br><span class="line"><span class="meta"># </span><span class="language-bash">显示源代码段</span></span><br><span class="line"><span class="meta">pwndbg&gt; </span><span class="language-bash">ctx code</span> </span><br></pre></td></tr></table></figure>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/About/">About</a></li>
+         
+          <li><a href="/blog/archives/">Writing</a></li>
+         
+          <li><a href="/blog/Search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#GDB-Pwndbg"><span class="toc-number">1.</span> <span class="toc-text">GDB + Pwndbg</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">1.1.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%AD%E7%82%B9"><span class="toc-number">1.2.</span> <span class="toc-text">断点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">1.3.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%88"><span class="toc-number">1.4.</span> <span class="toc-text">栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E7%9C%8B"><span class="toc-number">1.5.</span> <span class="toc-text">数据查看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A0%86"><span class="toc-number">1.6.</span> <span class="toc-text">堆</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.7.</span> <span class="toc-text">进程调试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">1.8.</span> <span class="toc-text">其他</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/04/04/GDB/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/04/04/GDB/&text=GDB"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/04/04/GDB/&is_video=false&description=GDB"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=GDB&body=Check out this article: https://zzz200.github.io/blog/2022/04/04/GDB/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/04/04/GDB/&title=GDB"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/04/04/GDB/&name=GDB&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/04/04/GDB/&t=GDB"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022
+    zzZ
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/About/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/blog/Search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/blog/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
