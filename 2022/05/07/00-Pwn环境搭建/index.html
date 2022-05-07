@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Pwn 环境搭建 系统环境：Ubuntu 20.04 LTS amd64  基本软件文本编辑器: vim + vimplus  vim 就不必多说了，配置好vim用起来香的一批，相关使用及配置–&gt; vim(local) vim(published)  网络相关工具: net-tools、ncat   net-tools, 包含有ifconfig、netstat这些基本的网络工具 ncat、n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pwn 环境搭建">
+<meta property="og:url" content="https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="zzZ&#39; Blog">
+<meta property="og:description" content="Pwn 环境搭建 系统环境：Ubuntu 20.04 LTS amd64  基本软件文本编辑器: vim + vimplus  vim 就不必多说了，配置好vim用起来香的一批，相关使用及配置–&gt; vim(local) vim(published)  网络相关工具: net-tools、ncat   net-tools, 包含有ifconfig、netstat这些基本的网络工具 ncat、n">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/zzZ200/imgrepos/main/PicturePasted%20image%2020220507163036.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/zzZ200/imgrepos/main/PicturePasted%20image%2020220507170807.png">
+<meta property="article:published_time" content="2022-05-07T10:55:03.000Z">
+<meta property="article:modified_time" content="2022-05-07T10:57:51.745Z">
+<meta property="article:author" content="zzZ">
+<meta property="article:tag" content="blog">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="environment">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/zzZ200/imgrepos/main/PicturePasted%20image%2020220507163036.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/blog/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/blog/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/blog/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Pwn 环境搭建</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/blog/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/blog/atom.xml" title="zzZ&#39; Blog" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+			tex2jax: {
+			  skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+			  inlineMath: [['$','$']]
+			}
+		  });
+		</script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/About/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/blog/Search/">Search</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/blog/2022/05/05/Ghidra/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&text=Pwn 环境搭建"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&is_video=false&description=Pwn 环境搭建"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Pwn 环境搭建&body=Check out this article: https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&name=Pwn 环境搭建&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&t=Pwn 环境搭建"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Pwn-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">Pwn 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">基本软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">依赖库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pwn-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.</span> <span class="toc-text">Pwn 常用工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#binutils"><span class="toc-number">1.3.1.</span> <span class="toc-text">binutils</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#readelf"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">readelf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objdump"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">objdump</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strace-amp-ltrace"><span class="toc-number">1.3.2.</span> <span class="toc-text">strace &amp; ltrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pwntools"><span class="toc-number">1.3.3.</span> <span class="toc-text">Pwntools</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.4.</span> <span class="toc-text">逆向工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Ghidra-%E2%9C%85"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">Ghidra ✅</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDA-Pro"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">IDA Pro</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#radare2"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">radare2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E5%99%A8"><span class="toc-number">1.3.5.</span> <span class="toc-text">动态调试器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GDB-Pwndbg"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">GDB + Pwndbg</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gadget-finder"><span class="toc-number">1.3.6.</span> <span class="toc-text">gadget finder</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ropper"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">ropper</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ROPgadget"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">ROPgadget</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#one-gadget"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">one_gadget</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#libc%E5%BA%93"><span class="toc-number">1.3.7.</span> <span class="toc-text">libc库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#LibcSearcher"><span class="toc-number">1.3.7.1.</span> <span class="toc-text">LibcSearcher</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#patchelf"><span class="toc-number">1.3.7.2.</span> <span class="toc-text">patchelf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#glibc%E6%BA%90%E7%A0%81"><span class="toc-number">1.3.7.3.</span> <span class="toc-text">glibc源码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pwn%E7%8E%AF%E5%A2%83%E8%87%AA%E5%8A%A8%E6%90%AD%E5%BB%BA%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.</span> <span class="toc-text">Pwn环境自动搭建脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E7%8E%AF%E5%A2%83"><span class="toc-number">1.5.</span> <span class="toc-text">Docker环境</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Pwn 环境搭建
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">zzZ</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2022-05-07T10:55:03.000Z" itemprop="datePublished">2022-05-07</time>
+        
+        (Updated: <time datetime="2022-05-07T10:57:51.745Z" itemprop="dateModified">2022-05-07</time>)
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/blog/categories/Tools/">Tools</a>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/blog/tags/blog/" rel="tag">blog</a>, <a class="tag-link-link" href="/blog/tags/environment/" rel="tag">environment</a>, <a class="tag-link-link" href="/blog/tags/pwn/" rel="tag">pwn</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Pwn-环境搭建"><a href="#Pwn-环境搭建" class="headerlink" title="Pwn 环境搭建"></a>Pwn 环境搭建</h1><blockquote>
+<p>系统环境：Ubuntu 20.04 LTS amd64</p>
+</blockquote>
+<h2 id="基本软件"><a href="#基本软件" class="headerlink" title="基本软件"></a>基本软件</h2><p><strong>文本编辑器</strong>: <code>vim</code> + <a target="_blank" rel="noopener" href="https://github.com/chxuan/vimplus.git">vimplus</a></p>
+<blockquote>
+<p>vim 就不必多说了，配置好vim用起来香的一批，相关使用及配置–&gt; <a href="vim.md">vim(local)</a> <a href="https://zzz200.github.io/blog/2022/03/10/vim/">vim(published)</a></p>
+</blockquote>
+<p><strong>网络相关工具</strong>: <code>net-tools</code>、<code>ncat</code></p>
+<blockquote>
+<ul>
+<li>net-tools, 包含有ifconfig、netstat这些基本的网络工具</li>
+<li>ncat、nc, 网络连接器</li>
+</ul>
+</blockquote>
+<p><strong>shell增强</strong>: <code>tmux</code>、<code>zsh</code> + <a target="_blank" rel="noopener" href="https://ohmyz.sh/">ohmyzsh</a></p>
+<blockquote>
+<ul>
+<li>tmux: 终端复用器，配合上Mac的iTerm2香的一匹</li>
+<li>zsh: 一个不错的shell，加上ohmyzsh，可以省去很多时间去自己配置</li>
+</ul>
+</blockquote>
+<p><strong>ssh+vmware文件夹共享</strong>: 开启ssh服务器，直接在宿主机上ssh连接pwn的虚拟机环境操作即可，宿主机与虚拟机传输文件通过文件夹共享即可，不用再依赖虚拟机的桌面环境(其实可以不用装Desktop版本，直接装个Server版本就足够了)</p>
+<img src="https://raw.githubusercontent.com/zzZ200/imgrepos/main/PicturePasted%20image%2020220507163036.png" style="zoom:50%;" />
+
+<h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install lib32ncurses5-dev lib32z1 # 安装32位库</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>64位的系统里头默认没有安装32位的运行库，运行32位程序的时候会报错</li>
+</ul>
+<h2 id="Pwn-常用工具"><a href="#Pwn-常用工具" class="headerlink" title="Pwn 常用工具"></a>Pwn 常用工具</h2><h3 id="binutils"><a href="#binutils" class="headerlink" title="binutils"></a>binutils</h3><blockquote>
+<p>📖wiki: <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GNU_Binutils">https://zh.wikipedia.org/wiki/GNU_Binutils</a></p>
+</blockquote>
+<p>安装： <code>sudo apt install binutils</code></p>
+<h4 id="readelf"><a href="#readelf" class="headerlink" title="readelf"></a>readelf</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">readelf -h    # 显示文件头</span><br><span class="line">readelf -l    # 显示程序头</span><br><span class="line">readelf -S    # 显示节区头</span><br><span class="line">readelf -s    # 显示符号表</span><br><span class="line">readelf --dyn-syms # 显示动态符号表</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">❯ readelf -h pwn1</span><br><span class="line">ELF Header:</span><br><span class="line">  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00</span><br><span class="line">  Class:                             ELF64</span><br><span class="line">  Data:                              2&#x27;s complement, little endian</span><br><span class="line">  Version:                           1 (current)</span><br><span class="line">  OS/ABI:                            UNIX - System V</span><br><span class="line">  ABI Version:                       0</span><br><span class="line">  Type:                              EXEC (Executable file)</span><br><span class="line">  Machine:                           Advanced Micro Devices X86-64</span><br><span class="line">  Version:                           0x1</span><br><span class="line">  Entry point address:               0x401060</span><br><span class="line">  Start of program headers:          64 (bytes into file)</span><br><span class="line">  Start of section headers:          14680 (bytes into file)</span><br><span class="line">  Flags:                             0x0</span><br><span class="line">  Size of this header:               64 (bytes)</span><br><span class="line">  Size of program headers:           56 (bytes)</span><br><span class="line">  Number of program headers:         11</span><br><span class="line">  Size of section headers:           64 (bytes)</span><br><span class="line">  Number of section headers:         29</span><br><span class="line">  Section header string table index: 28</span><br></pre></td></tr></table></figure>
+
+<h4 id="objdump"><a href="#objdump" class="headerlink" title="objdump"></a>objdump</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objdump -d target   # 反汇编</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">❯ objdump -d test -j .text</span><br><span class="line"></span><br><span class="line">test:     file format elf64-x86-64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Disassembly of section .text:</span><br><span class="line"></span><br><span class="line">0000000000001050 &lt;_start&gt;:</span><br><span class="line">    1050:	31 ed                	xor    %ebp,%ebp</span><br><span class="line">    1052:	49 89 d1             	mov    %rdx,%r9</span><br><span class="line">    1055:	5e                   	pop    %rsi</span><br><span class="line">    1056:	48 89 e2             	mov    %rsp,%rdx</span><br><span class="line">    1059:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp</span><br><span class="line">    105d:	50                   	push   %rax</span><br><span class="line">    105e:	54                   	push   %rsp</span><br><span class="line">    105f:	4c 8d 05 4a 01 00 00 	lea    0x14a(%rip),%r8        # 11b0 &lt;__libc_csu_fini&gt;</span><br><span class="line">    1066:	48 8d 0d e3 00 00 00 	lea    0xe3(%rip),%rcx        # 1150 &lt;__libc_csu_init&gt;</span><br><span class="line">    106d:	48 8d 3d c1 00 00 00 	lea    0xc1(%rip),%rdi        # 1135 &lt;main&gt;</span><br><span class="line">    1074:	ff 15 66 2f 00 00    	callq  *0x2f66(%rip)        # 3fe0 &lt;__libc_start_main@GLIBC_2.2.5&gt;</span><br><span class="line">    107a:	f4                   	hlt</span><br><span class="line">    107b:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)</span><br><span class="line"></span><br><span class="line">0000000000001080 &lt;deregister_tm_clones&gt;:</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1494510">objdump命令解析</a></p>
+</blockquote>
+<h3 id="strace-amp-ltrace"><a href="#strace-amp-ltrace" class="headerlink" title="strace &amp; ltrace"></a>strace &amp; ltrace</h3><ul>
+<li>strace 命令基于 ptrace 系统调用，用于记录和解析程序执行过程中的所有系统调用和信号传递。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">❯ ltrace ./pwn1</span><br><span class="line">puts(&quot;please input&quot;please input</span><br><span class="line">)                                                            = 13</span><br><span class="line">gets(0x7fffb930d8f1, 0x220a2a0, 0, 0x7fe8cd9590a7</span><br><span class="line">)                              = 0x7fffb930d8f1</span><br><span class="line">puts(&quot;&quot;</span><br><span class="line">)                                                                        = 1</span><br><span class="line">puts(&quot;ok,bye!!!&quot;ok,bye!!!</span><br><span class="line">)                                                               = 10</span><br><span class="line">+++ exited (status 0) +++</span><br></pre></td></tr></table></figure>
+
+<h3 id="Pwntools"><a href="#Pwntools" class="headerlink" title="Pwntools"></a>Pwntools</h3><ul>
+<li>pwntools是一个CTF框架及开发库，Pwn选手必备的一个python库</li>
+<li>英文文档： <a target="_blank" rel="noopener" href="https://docs.pwntools.com/en/stable/">https://docs.pwntools.com/en/stable/</a></li>
+<li>中文文档： <a target="_blank" rel="noopener" href="https://pwntoolsdocinzh-cn.readthedocs.io/en/master/intro.html">https://pwntoolsdocinzh-cn.readthedocs.io/en/master/intro.html</a></li>
+<li><strong>安装</strong>: <code>pip3 install pwntools</code></li>
+</ul>
+<h3 id="逆向工具"><a href="#逆向工具" class="headerlink" title="逆向工具"></a>逆向工具</h3><h4 id="Ghidra-✅"><a href="#Ghidra-✅" class="headerlink" title="Ghidra ✅"></a>Ghidra ✅</h4><p>本人是从学Pwn开始就一直用的 Ghidra，目前做题的需求都能够满足</p>
+<ul>
+<li>本人的Ghidra笔记 –&gt; <a href="Ghidra.md">Ghidra(local)</a> <a href="https://zzz200.github.io/blog/2022/05/05/Ghidra/">Ghidra(published)</a></li>
+<li>简介： <a target="_blank" rel="noopener" href="http://0xeb.net/2019/03/ghidra-a-quick-overview/">http://0xeb.net/2019/03/ghidra-a-quick-overview/</a><ul>
+<li>翻译： <a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-250056.htm">https://bbs.pediy.com/thread-250056.htm</a></li>
+</ul>
+</li>
+</ul>
+<h4 id="IDA-Pro"><a href="#IDA-Pro" class="headerlink" title="IDA Pro"></a>IDA Pro</h4><p>官网免费版本（免费版本只能联网使用x64反编译）： <a target="_blank" rel="noopener" href="https://hex-rays.com/ida-free/">https://hex-rays.com/ida-free/</a> ，对于IDA Pro因为自己用的很少就不多说了。。。</p>
+<blockquote>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-259304.htm">看雪-ida常用快捷键</a></li>
+<li>《CTF竞赛权威指南 Pwn篇》第6章</li>
+<li><strong>keypatch插件</strong>: <a target="_blank" rel="noopener" href="https://github.com/keystone-engine/keypatch">https://github.com/keystone-engine/keypatch</a></li>
+</ul>
+</blockquote>
+<h4 id="radare2"><a href="#radare2" class="headerlink" title="radare2"></a>radare2</h4><p><a target="_blank" rel="noopener" href="https://github.com/radare/radare2">https://github.com/radare/radare2</a></p>
+<p>radare2 也是一个逆向工程框架，不同于Ghidra和IDA Pro，它没有GUI界面，所有操作都需要通过命令行来执行。</p>
+<h3 id="动态调试器"><a href="#动态调试器" class="headerlink" title="动态调试器"></a>动态调试器</h3><h4 id="GDB-Pwndbg"><a href="#GDB-Pwndbg" class="headerlink" title="GDB + Pwndbg"></a>GDB + Pwndbg</h4><p>GDB wiki介绍: <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GNU%E4%BE%A6%E9%94%99%E5%99%A8">https://zh.wikipedia.org/wiki/GNU侦错器</a></p>
+<p>Pwndbg -&gt; 一个GDB插件: <a target="_blank" rel="noopener" href="https://github.com/pwndbg/pwndbg">https://github.com/pwndbg/pwndbg</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/pwndbg/pwndbg</span><br><span class="line">cd pwndbg</span><br><span class="line">./setup.sh</span><br></pre></td></tr></table></figure>
+
+<p>GDB(Pwndbg)相关的使用: <a href="GDB.md">GDB(local)</a> <a href="https://zzz200.github.io/blog/2022/04/04/GDB/">GDB(published)</a></p>
+<img src="https://raw.githubusercontent.com/zzZ200/imgrepos/main/PicturePasted%20image%2020220507170807.png" style="zoom:50%;" />
+
+
+<p><strong>checksec</strong>, 在安装完 pwndbg 之后会附带安装好 checksec 工具，它也有单独的脚本：<a target="_blank" rel="noopener" href="https://github.com/slimm609/checksec.sh">checksec.sh</a>. checksec 可检测可执行文件开启的各种<a href="Linux%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6.md">安全机制(local)</a>，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">❯ checksec fastbin_dup_2</span><br><span class="line">[*] &#x27;/mnt/hgfs/ctf/HeapLAB/challenge-fastbin_dup/fastbin_dup_2&#x27;</span><br><span class="line">    Arch:     amd64-64-little</span><br><span class="line">    RELRO:    Full RELRO</span><br><span class="line">    Stack:    Canary found</span><br><span class="line">    NX:       NX enabled</span><br><span class="line">    PIE:      PIE enabled</span><br><span class="line">    RUNPATH:  b&#x27;../.glibc/glibc_2.30_no-tcache</span><br></pre></td></tr></table></figure>
+
+<h3 id="gadget-finder"><a href="#gadget-finder" class="headerlink" title="gadget finder"></a>gadget finder</h3><blockquote>
+<p>📖wiki: 返回导向编程（英语：Return-Oriented Programming，缩写：ROP）是计算机安全中的一种漏洞利用技术，该技术允许攻击者在程序启用了安全保护技术（如堆栈不可执行）的情况下控制程序执行流，执行恶意代码。其核心思想是通过栈缓冲器溢出等方式控制堆栈调用以劫持程序控制流并执行针对性的机器语言指令序列（称为Gadgets）。所谓 gadgets 就是以 ret 结尾的指令序列，通过这些指令序列，我们可以修改某些地址的内容，方便控制程序的执行流程。</p>
+<ul>
+<li>gadget finder 就是用来寻找这些以 ret 结尾的指令序列的工具</li>
+</ul>
+</blockquote>
+<h4 id="ropper"><a href="#ropper" class="headerlink" title="ropper"></a>ropper</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/sashs/Ropper">https://github.com/sashs/Ropper</a></p>
+</blockquote>
+<ul>
+<li>安装: <code>pip3 install ropper</code></li>
+<li>ropper 兼容 pwndbg，可以在 pwndbg 中直接运行来搜索gadget</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">❯ ropper -f fastbin_dup_2 --search=&quot;pop rdi&quot;</span><br><span class="line">[INFO] Load gadgets for section: LOAD</span><br><span class="line">[LOAD] loading... 100%</span><br><span class="line">[LOAD] removing double gadgets... 100%</span><br><span class="line">[INFO] Searching for gadgets: pop rdi</span><br><span class="line"></span><br><span class="line">[INFO] File: fastbin_dup_2</span><br><span class="line">0x0000000000000c03: pop rdi; ret;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ROPgadget"><a href="#ROPgadget" class="headerlink" title="ROPgadget"></a>ROPgadget</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/JonathanSalwan/ROPgadget">https://github.com/JonathanSalwan/ROPgadget</a></p>
+</blockquote>
+<ul>
+<li>安装: <code>pip3 install ROPgadget</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">❯ ROPgadget --binary fastbin_dup_2 | grep &quot;pop rdi&quot; </span><br><span class="line">0x0000000000000c03 : pop rdi ; ret</span><br></pre></td></tr></table></figure>
+
+<h4 id="one-gadget"><a href="#one-gadget" class="headerlink" title="one_gadget"></a>one_gadget</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/david942j/one_gadget">https://github.com/david942j/one_gadget</a></p>
+</blockquote>
+<ul>
+<li>安装: <code>sudo gem install one_gadget</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">❯ one_gadget libc-2.23.so</span><br><span class="line">0x45226 execve(&quot;/bin/sh&quot;, rsp+0x30, environ)</span><br><span class="line">constraints:</span><br><span class="line">  rax == NULL</span><br><span class="line"></span><br><span class="line">0x4527a execve(&quot;/bin/sh&quot;, rsp+0x30, environ)</span><br><span class="line">constraints:</span><br><span class="line">  [rsp+0x30] == NULL</span><br><span class="line"></span><br><span class="line">0xf03a4 execve(&quot;/bin/sh&quot;, rsp+0x50, environ)</span><br><span class="line">constraints:</span><br><span class="line">  [rsp+0x50] == NULL</span><br><span class="line"></span><br><span class="line">0xf1247 execve(&quot;/bin/sh&quot;, rsp+0x70, environ)</span><br><span class="line">constraints:</span><br><span class="line">  [rsp+0x70] == NULL</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="libc库"><a href="#libc库" class="headerlink" title="libc库"></a>libc库</h3><p>本地libc：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/matrix1001/glibc-all-in-one">https://github.com/matrix1001/glibc-all-in-one</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/niklasb/libc-database">https://github.com/niklasb/libc-database</a></li>
+</ul>
+<p>在线libc查询：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://libc.rip/">https://libc.rip/</a></li>
+<li><a target="_blank" rel="noopener" href="https://libc.nullbyte.cat/">https://libc.nullbyte.cat</a></li>
+</ul>
+<h4 id="LibcSearcher"><a href="#LibcSearcher" class="headerlink" title="LibcSearcher"></a>LibcSearcher</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/lieanu/LibcSearcher">https://github.com/lieanu/LibcSearcher</a> （很久没有更新了）</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/rycbar77/LibcSearcher">https://github.com/rycbar77/LibcSearcher</a> （在上一个的基础上添加了在线查询接口 最近一次更新：2021.11.29）</li>
+</ul>
+<h4 id="patchelf"><a href="#patchelf" class="headerlink" title="patchelf"></a>patchelf</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/NixOS/patchelf">https://github.com/NixOS/patchelf</a></p>
+</blockquote>
+<ul>
+<li>patchelf 可以用来指定二进制程序的glibc版本</li>
+<li>安装: <code>sudo apt install patchelf</code></li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># </span><span class="language-bash">Example</span></span><br><span class="line">patchelf --set-interpreter /opt/glibc-all-in-one/libs/2.27-3ubuntu1_amd64/ld-2.27.so --set-rpath /opt/glibc-all-in-one/libs/2.27-3ubuntu1_amd64 TargetProgram</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://song-10.gitee.io/2020/04/14/pwn-2020-04-14-change-glibc/">指定glibc - nop</a></p>
+</blockquote>
+<h4 id="glibc源码"><a href="#glibc源码" class="headerlink" title="glibc源码"></a>glibc源码</h4><ul>
+<li><a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.31/source/">https://elixir.bootlin.com/glibc/glibc-2.31/source/</a></li>
+</ul>
+<h2 id="Pwn环境自动搭建脚本"><a href="#Pwn环境自动搭建脚本" class="headerlink" title="Pwn环境自动搭建脚本"></a>Pwn环境自动搭建脚本</h2><p>为了防止环境被意外删掉或者崩掉后能够快速重建环境，自己就搞了一个包含了上面涉及到的大部分工具的环境搭建脚本： <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/zzZ200/config/main/pwn_env_install.sh">https://raw.githubusercontent.com/zzZ200/config/main/pwn_env_install.sh</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/zzZ200/config/main/pwn_env_install.sh -O ~/Downloads/pwn_env_install.sh</span><br><span class="line">cd ~/Downloads</span><br><span class="line">bash ./pwn_env_install.sh</span><br></pre></td></tr></table></figure>
+
+<h2 id="Docker环境"><a href="#Docker环境" class="headerlink" title="Docker环境"></a>Docker环境</h2><p>懒的搭建环境的话也有大佬搞好的docker环境：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/skysider/pwndocker">https://github.com/skysider/pwndocker</a></li>
+<li><a target="_blank" rel="noopener" href="https://hub.docker.com/r/skysider/pwndocker">https://hub.docker.com/r/skysider/pwndocker</a></li>
+</ul>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/blog/">Home</a></li>
+         
+          <li><a href="/blog/About/">About</a></li>
+         
+          <li><a href="/blog/archives/">Writing</a></li>
+         
+          <li><a href="/blog/Search/">Search</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Pwn-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">Pwn 环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%BD%AF%E4%BB%B6"><span class="toc-number">1.1.</span> <span class="toc-text">基本软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">依赖库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pwn-%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.</span> <span class="toc-text">Pwn 常用工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#binutils"><span class="toc-number">1.3.1.</span> <span class="toc-text">binutils</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#readelf"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">readelf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#objdump"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">objdump</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strace-amp-ltrace"><span class="toc-number">1.3.2.</span> <span class="toc-text">strace &amp; ltrace</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pwntools"><span class="toc-number">1.3.3.</span> <span class="toc-text">Pwntools</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%86%E5%90%91%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.4.</span> <span class="toc-text">逆向工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Ghidra-%E2%9C%85"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">Ghidra ✅</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IDA-Pro"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">IDA Pro</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#radare2"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">radare2</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E8%AF%95%E5%99%A8"><span class="toc-number">1.3.5.</span> <span class="toc-text">动态调试器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GDB-Pwndbg"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">GDB + Pwndbg</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gadget-finder"><span class="toc-number">1.3.6.</span> <span class="toc-text">gadget finder</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ropper"><span class="toc-number">1.3.6.1.</span> <span class="toc-text">ropper</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ROPgadget"><span class="toc-number">1.3.6.2.</span> <span class="toc-text">ROPgadget</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#one-gadget"><span class="toc-number">1.3.6.3.</span> <span class="toc-text">one_gadget</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#libc%E5%BA%93"><span class="toc-number">1.3.7.</span> <span class="toc-text">libc库</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#LibcSearcher"><span class="toc-number">1.3.7.1.</span> <span class="toc-text">LibcSearcher</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#patchelf"><span class="toc-number">1.3.7.2.</span> <span class="toc-text">patchelf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#glibc%E6%BA%90%E7%A0%81"><span class="toc-number">1.3.7.3.</span> <span class="toc-text">glibc源码</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pwn%E7%8E%AF%E5%A2%83%E8%87%AA%E5%8A%A8%E6%90%AD%E5%BB%BA%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.</span> <span class="toc-text">Pwn环境自动搭建脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E7%8E%AF%E5%A2%83"><span class="toc-number">1.5.</span> <span class="toc-text">Docker环境</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&text=Pwn 环境搭建"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&is_video=false&description=Pwn 环境搭建"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Pwn 环境搭建&body=Check out this article: https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=Pwn 环境搭建"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&name=Pwn 环境搭建&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://zzz200.github.io/blog/2022/05/07/00-Pwn%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&t=Pwn 环境搭建"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2022
+    zzZ
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/blog/">Home</a></li><!--
+     --><!--
+       --><li><a href="/blog/About/">About</a></li><!--
+     --><!--
+       --><li><a href="/blog/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/blog/Search/">Search</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/blog/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
